@@ -53,11 +53,7 @@ if [ "$(getprop persist.vendor.usb.config)" == "" -a "$(getprop ro.build.type)" 
     else
 	  case "$(getprop ro.baseband)" in
 	      "apq")
-	        if [ "$target" == "neo" ] || [ "$target" == "anorak" ]; then
-			setprop persist.vendor.usb.config diag,qdss,adb
-		else
-			setprop persist.vendor.usb.config diag,adb
-		fi
+	          setprop persist.vendor.usb.config diag,adb
 	      ;;
 	      *)
 	      case "$soc_hwplatform" in
@@ -107,11 +103,8 @@ if [ "$(getprop persist.vendor.usb.config)" == "" -a "$(getprop ro.build.type)" 
 	              "sdm845" | "sdm710")
 		          setprop persist.vendor.usb.config diag,serial_cdev,rmnet,dpl,adb
 		      ;;
-	              "msmnile" | "sm6150" | "trinket" | "lito" | "atoll" | "bengal" | "lahaina" | "holi" | "taro" | "kalama" | "crow" | "parrot" | "ravelin")
+	              "msmnile" | "sm6150" | "trinket" | "lito" | "atoll" | "bengal" | "lahaina" | "holi" | "taro" | "kalama" | "crow")
 			  setprop persist.vendor.usb.config diag,serial_cdev,rmnet,dpl,qdss,adb
-		      ;;
-	              "monaco")
-		          setprop persist.vendor.usb.config diag,qdss,rmnet,adb
 		      ;;
 	              *)
 		          setprop persist.vendor.usb.config diag,adb
@@ -148,7 +141,7 @@ esac
 
 # check configfs is mounted or not
 if [ -d /config/usb_gadget ]; then
-	usb_product=`getprop vendor.usb.product_string`;
+        usb_product=`getprop vendor.usb.product_string`;
 	vendor_model=`getprop ro.product.vendor.model`;
 	if [ "$usb_product" == "" ]; then
 		setprop vendor.usb.product_string "$vendor_model"
@@ -189,14 +182,3 @@ fi
 if [ -d /config/usb_gadget/g1/functions/uac2.0 ]; then
 	setprop vendor.usb.uac2.function.init 1
 fi
-
-# enable ncm
-case "$target" in
-"neo" | "anorak")
-	if [ -d /config/usb_gadget/g1/functions/ncm.0 ]; then
-		cd /config/usb_gadget/g1/functions/ncm.0
-
-		echo WINNCM > os_desc/interface.ncm/compatible_id
-	fi
-    ;;
-esac
